@@ -6,6 +6,22 @@ class ListNode(object):
 
 
 class ReverseKNodes(object):
+    def move_ahead(self, original, k):
+        for i in range(k-1):
+            original = original.next
+            if not original:
+                return False
+        return True
+
+    def swap_nodes(self, preva, a, prevb, b):
+        tmp = ListNode(0)
+        # replace a with tmp
+        tmp.next = a.next
+        preva.next = tmp
+        # replace b with a
+
+
+
     def reverseKGroup(self, head, k):
         """
         :type head: ListNode
