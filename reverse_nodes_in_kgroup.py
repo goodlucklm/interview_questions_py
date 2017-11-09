@@ -4,23 +4,36 @@ class ListNode(object):
         self.val = x
         self.next = None
 
+    def __str__(self):
+        return str(self.val)
+
+    def __repr__(self):
+        return str(self.val)
+
 
 class ReverseKNodes(object):
     def move_ahead(self, original, k):
-        for i in range(k-1):
+        for i in range(k):
             original = original.next
             if not original:
-                return False
-        return True
+                return None
+        return original
 
-    def swap_nodes(self, preva, a, prevb, b):
+    def swap_nodes(self, preva, prevb):
+        if not preva or not prevb :
+            return None
+        a = preva.next
+        b = prevb.next
+        if not a or not b:
+            return None
+
         tmp = ListNode(0)
-        # replace a with tmp
+        preva.next = b
+        prevb.next = a
         tmp.next = a.next
-        preva.next = tmp
-        # replace b with a
-
-
+        a.next = b.next
+        b.next = tmp.next
+        return True
 
     def reverseKGroup(self, head, k):
         """
@@ -37,25 +50,24 @@ class ReverseKNodes(object):
             return head
 
         prev = ListNode(0)
-        front = head
-        back = head
-        for i in range(k-1):
-            head = head.next
+        prev.next = head
+        head = self.move_ahead(head, k-1)
+        if not head:
+            return prev.next
+
         while True:
-            for i in range(k-1):
-                back = back.next
-                if not back:
-                    return head
-            # connect prev to the second node
-            prev.next = front.next
-            # insert front behind back
-            front.next = back.next
-            back.next = front
-            # update front and back and prev
-            prev = front
-            front = front.next
-            back = front
-            if not back:
+            front = prev  # point front.next is the node to swap
+            back = prev  # back.next is the node to swap
+            back = self.move_ahead(back, k-1)
+            if not back or not back.next:
+                break
+            for i in range(1, (k >> 1)+1):
+                self.swap_nodes(front, back)
+                # update front, back
+                front = front.next
+                back = self.move_ahead(front, k-2*i-1)
+            prev = self.move_ahead(prev, k)
+            if not prev:
                 break
         return head
 
@@ -63,8 +75,9 @@ class ReverseKNodes(object):
 if __name__ == '__main__':
     head = ListNode(1)
     p = head
-    for i in range(2):
+    for i in range(5):
         p.next = ListNode(i+2)
         p = p.next
     rnk = ReverseKNodes()
-    result = rnk.reverseKGroup(head, 3)
+    result = rnk.reverseKGroup(head, 6)
+    print result
