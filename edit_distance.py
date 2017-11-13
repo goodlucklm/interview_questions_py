@@ -1,21 +1,18 @@
 class EditDistance(object):
-    def shift_solution(self, word1, word2):
+    def recursive_solution(self, word1, word2):
         m = len(word1)
         n = len(word2)
-        if m < n:
-            return self.shift_solution(word2, word1)
-
-        min_distance = m
-        for i in range(n+1):  # from word2[0] at word1[m/2] to word2[n-1] and word1[m/2]
-            shift = m/2-i
-            insert_delete_distance = abs(shift)+abs(n-(m-shift))
-            replace_distance = 0
-            for j in range(n):
-                if j+shift >= 0 and j+shift < m:
-                    if word1[j+shift] != word2[j]:
-                        replace_distance += 1
-            min_distance = min(min_distance, insert_delete_distance+replace_distance)
-        return min_distance
+        i = 0
+        while i < m and i < n:
+            if word1[i] != word2[i]:
+                return 1+min(
+                    self.recursive_solution(word1[i+1:], word2[i:]),  # remove at word1
+                    self.recursive_solution(word1[i:], word2[i+1:]),  # remove at word2
+                    self.recursive_solution(word1[i+1:], word2[i+1:])  # replace at word1
+                )
+            else:
+                i += 1
+        return m-i+n-i
 
     def dp_solution(self, word1, word2):
         m = len(word1)
@@ -47,8 +44,8 @@ class EditDistance(object):
         :type word2: str
         :rtype: int
         """
-        return self.dp_solution(word1, word2)
+        return self.recursive_solution(word1, word2)
 
 if __name__ == '__main__':
     ed = EditDistance()
-    print ed.minDistance('abcde', 'def')
+    print ed.minDistance('horse', 'osr')
