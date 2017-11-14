@@ -5,7 +5,6 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
-
 class ValidBinarySearchTree(object):
     def areAllNodesLessThan(self, p, val):
         if not p:
@@ -28,6 +27,16 @@ class ValidBinarySearchTree(object):
         return (lower is None or p.val > lower) and (upper is None or p.val < upper) and \
                self.isThisValidBST(p.left, lower, p.val) and self.isThisValidBST(p.right, p.val, upper)
 
+    def monotonic(self, p, L):
+        if not p:
+            return True
+        if not self.monotonic(p.left, L):
+            return False
+        if L[0] is not None and L[0].val > p.val:
+            return False
+        L[0] = p
+        return self.monotonic(p.right, L)
+
 
     def isValidBST(self, root):
         """
@@ -36,3 +45,7 @@ class ValidBinarySearchTree(object):
         """
         # return self.isValidBST_1(root)
         return self.isThisValidBST(root, None, None)
+
+if __name__ == '__main__':
+    vbst = ValidBinarySearchTree()
+    print vbst.monotonic(TreeNode(0))
