@@ -25,73 +25,33 @@ class WildCardMatching(object):
         :type p: str
         :rtype: bool
         """
-        while('**' in p):
-            p = p.replace('**', '*')
+        dp = []
+        m = len(s)
+        n = len(p)
+        for i in range(m+1):
+            dp.append([False]*(n+1))
 
-        pointer_s = 0
-        pointer_p = 0
-        while (pointer_s < len(s) and pointer_p < len(p)):
-            # if charp is not ? or *, chars has to match charp
-            if p[pointer_p] != '*' and p[pointer_p] != '?':
-                if p[pointer_p] != s[pointer_s]:
-                    return False
-                else:  # p[pointer_p] == s[pointer_p] go to next one
-                    pointer_s += 1
-                    pointer_p += 1
-
-            # if charp is ? chars matches charp
-            elif p[pointer_p] == '?':
-                pointer_s += 1
-                pointer_p += 1
-
-            # if charp is * find next chars match next charp
-            elif p[pointer_p] == '*':
-                if pointer_p == len(p)-1:
-                    return True
-                else:  # replace * with each possibility
-                    # find the string in p after * to match with
-                    char_after_star = ''
-                    shift = 1
-                    while (pointer_p+shift < len(p) and p[pointer_p+shift] != '*'):
-                        char_after_star += p[pointer_p+shift]
-                        shift += 1
-
-                    # find appearance of char_after_star in s
-                    appearences = self.find_appearances(char_after_star, s[pointer_s:])
-
-                    # get all possible strings for *
-                    possiblities = []
-                    for i in appearences:
-                        possiblities.append(s[pointer_s:i+pointer_s])
-
-                    for possible in possiblities:
-                        if self.isMatch(s[pointer_s:], p[pointer_p:].replace('*', possible, 1)):
-                            return True
-                    return False
+        dp[0][0] = True
+        for j in range(1, n+1):
+            if p[j-1] == '*':
+                dp[0][j] = True
             else:
-                # should never reach here
-                pass
+                break
 
-        # p running out of char, s not
-        if pointer_p == len(p) and pointer_s < len(s):
-            return False
-        # s running out of char, p not
-        elif pointer_p < len(p) and pointer_s == len(s):
-            for c in p[pointer_p:]:
-                if c != '*':
-                    return False
-        else:
-            # p and s run out of chars at the same time
-            # handled by return
-            pass
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                if p[j-1] == '?' or s[i-1] == p[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                elif p[j-1] == '*':
+                    dp[i][j] = dp[i-1][j] or dp[i][j-1]
+                else:
+                    dp[i][j] = False
+
+        return dp[m][n]
+
         return True
 
-    def isMatch(self, s, p):
-        """
-        :type s: str
-        :type p: str
-        :rtype: bool
-        """
+    def isMatch_recursive(self, s, p):
         while('**' in p):
             p = p.replace('**', '*')
 
@@ -147,10 +107,18 @@ class WildCardMatching(object):
             rights = s[position+len(lss):]
             leftp = p[0:break_point]
             rightp = p[break_point+len(lss):]
-            if self.isMatch(lefts, leftp) and self.isMatch(rights, rightp):
+            if self.isMatch_recursive(lefts, leftp) and self.isMatch_recursive(rights, rightp):
                 return True
         return False
 
+
+    def isMatch(self, s, p):
+        """
+        :type s: str
+        :type p: str
+        :rtype: bool
+        """
+        return self.isMatch_dfs(s, p)
 if __name__ == '__main__':
     wcm = WildCardMatching()
-    print wcm.isMatch("ab", "?*")
+    print wcm.isMatch_recursive("ab", "?*")
