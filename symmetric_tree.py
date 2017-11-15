@@ -4,9 +4,6 @@ class SymmetricTree(object):
         :type root: TreeNode
         :rtype: bool
         """
-        if root is None:
-            return True
-
         level = [root]
         while len(level) > 0:
             values = []
