@@ -1,4 +1,5 @@
 from tree_utilities import TreeNode
+from list_utilities import ListNode
 
 class BinarySearchTree(object):
     def areAllNodesLessThan(self, p, val):
@@ -67,12 +68,22 @@ class BinarySearchTree(object):
         :type head: ListNode
         :rtype: TreeNode
         """
-        n = 0
-        p = head
-        while p is not None:
-            p = p.next
-            n += 1
-        return self.sortedListToBSTHelper(head, n)
+        if head is None:
+            return None
+        if head.next is None:
+            return TreeNode(head.val)
+        fast = head
+        slow = head
+        slower = head
+        while fast is not None and fast.next is not None:
+            fast = fast.next.next
+            slower = slow
+            slow = slow.next
+        root = TreeNode(slow.val)
+        root.right = self.sortedListToBST(slow.next)
+        slower.next = None
+        root.left = self.sortedListToBST(head)
+        return root
 
 
     def isValidBST(self, root):
@@ -85,6 +96,7 @@ class BinarySearchTree(object):
 
 if __name__ == '__main__':
     bst = BinarySearchTree()
-    bst.sortedArrayToBST([1,2,3,4])
+    head = ListNode(0)
+    bst.sortedListToBST(head)
 
 
