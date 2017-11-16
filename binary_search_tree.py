@@ -1,11 +1,6 @@
-# Definition for a binary tree node.
-class TreeNode(object):
-    def __init__(self, x):
-        self.val = x
-        self.left = None
-        self.right = None
+from tree_utilities import TreeNode
 
-class ValidBinarySearchTree(object):
+class BinarySearchTree(object):
     def areAllNodesLessThan(self, p, val):
         if not p:
             return True
@@ -37,6 +32,19 @@ class ValidBinarySearchTree(object):
         L[0] = p
         return self.monotonic(p.right, L)
 
+    def sortedArrayToBST(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: TreeNode
+        """
+        n = len(nums)
+        root = None
+        if n > 0:
+            middle = n/2
+            root = TreeNode(nums[middle])
+            root.left = self.sortedArrayToBST(nums[:middle])
+            root.right = self.sortedArrayToBST(nums[middle+1:])
+        return root
 
     def isValidBST(self, root):
         """
@@ -47,5 +55,7 @@ class ValidBinarySearchTree(object):
         return self.isThisValidBST(root, None, None)
 
 if __name__ == '__main__':
-    vbst = ValidBinarySearchTree()
-    print vbst.monotonic(TreeNode(0))
+    bst = BinarySearchTree()
+    bst.sortedArrayToBST([1,2,3,4])
+
+
