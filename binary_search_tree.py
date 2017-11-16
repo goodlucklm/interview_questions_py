@@ -46,6 +46,35 @@ class BinarySearchTree(object):
             root.right = self.sortedArrayToBST(nums[middle+1:])
         return root
 
+    def sortedListToBSTHelper(self, head, length):
+        root = None
+        if head is not None:
+            pre = head
+            for i in range(length/2-1):
+                pre = pre.next
+            middle = pre.next
+            root = TreeNode(middle.val)
+            pre.next = None
+            root.left = self.sortedListToBSTHelper(head, length/2)
+            if length % 2 == 0:
+                root.right = self.sortedListToBSTHelper(middle.next, length/2-1)
+            else:
+                root.right = self.sortedListToBSTHelper(middle.next, length/2)
+        return root
+
+    def sortedListToBST(self, head):
+        """
+        :type head: ListNode
+        :rtype: TreeNode
+        """
+        n = 0
+        p = head
+        while p is not None:
+            p = p.next
+            n += 1
+        return self.sortedListToBSTHelper(head, n)
+
+
     def isValidBST(self, root):
         """
         :type root: TreeNode
