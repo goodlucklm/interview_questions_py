@@ -92,20 +92,47 @@ class BinaryTree(object):
         :type root: TreeNode
         :rtype: int
         """
+        if not root: return 0
+        d = map(self.minDepth, (root.left, root.right))
+        return 1 + (min(d) or max(d))
+
+    def hasPathSum(self, root, sum):
+        """
+        :type root: TreeNode
+        :type sum: int
+        :rtype: bool
+        """
         if root is None:
-            return 0
+            return False
         if root.left is None and root.right is None:
-            return 1
-        elif root.left is not None and root.right is None:
-            return 1+self.minDepth(root.left)
-        elif root.right is not None and root.left is None:
-            return 1+self.minDepth(root.right)
+            return sum == root.val
         else:
-            return 1+min(self.minDepth(root.left), self.minDepth(root.right))
+            return self.hasPathSum(root.left, sum-root.val) or self.hasPathSum(root.right, sum-root.val)
+
+    def __find_path_sum(self, root, sum, path, results):
+        if root is not None:
+            path.append(root.val)
+            if root.left is None and root.right is None and sum == root.val:
+                results.append(path)
+            else:
+                self.__find_path_sum(root.left, sum-root.val, path, results)
+                self.__find_path_sum(root.right, sum-root.val, path, results)
+            path.pop()
+
+    def pathSum(self, root, sum):
+        """
+        :type root: TreeNode
+        :type sum: int
+        :rtype: List[List[int]]
+        """
+        results = []
+        self.__find_path_sum(root, sum, [], results)
+        return results
+
 
 if __name__ == '__main__':
     import tree_utilities
 
     root = tree_utilities.deserialize('[1,2,3,4,5]')
     solution = BinaryTree()
-    print solution.minDepth(root)
+    print solution.pathSum(root, 7)
