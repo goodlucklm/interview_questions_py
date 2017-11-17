@@ -58,6 +58,22 @@ class BinaryTree(object):
             depth += 1
         return results
 
+    def __get_height(self, root):
+        if root is None:
+            return 0
+        else:
+            return 1+max(self.__get_height(root.left), self.__get_height(root.right))
+
+    def isBalanced(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+        if root is None:
+            return True
+        return abs(self.__get_height(root.left)-self.__get_height(root.right)) <= 1 and self.isBalanced(root.left) and self.isBalanced(root.right)
+
+
 
 if __name__ == '__main__':
     import tree_utilities
