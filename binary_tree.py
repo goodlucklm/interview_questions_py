@@ -87,10 +87,25 @@ class BinaryTree(object):
         # return abs(self.__get_height(root.left)-self.__get_height(root.right)) <= 1 and self.isBalanced(root.left) and self.isBalanced(root.right)
         return self.__get_dfs_height(root) != -1
 
+    def minDepth(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+        if root is None:
+            return 0
+        if root.left is None and root.right is None:
+            return 1
+        elif root.left is not None and root.right is None:
+            return 1+self.minDepth(root.left)
+        elif root.right is not None and root.left is None:
+            return 1+self.minDepth(root.right)
+        else:
+            return 1+min(self.minDepth(root.left), self.minDepth(root.right))
 
 if __name__ == '__main__':
     import tree_utilities
 
-    root = tree_utilities.deserialize('[3,9,20,null,null,15,7]')
+    root = tree_utilities.deserialize('[1,2,3,4,5]')
     solution = BinaryTree()
-    print solution.bottomUPTraversal(root)
+    print solution.minDepth(root)
