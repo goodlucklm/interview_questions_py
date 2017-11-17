@@ -129,10 +129,42 @@ class BinaryTree(object):
         self.__find_path_sum(root, sum, [], results)
         return results
 
+    def __preorder_flatten(self, root, st):
+        if root is not None:
+            st.append(root)
+            self.__preorder_flatten(root.left, st)
+            self.__preorder_flatten(root.right, st)
+
+    def flatten(self, root):
+        """
+        :type root: TreeNode
+        :rtype: void Do not return anything, modify root in-place instead.
+        """
+        if root is None or (root.left is None and root.right is None): return
+        st = []
+        self.__preorder_flatten(root, st)
+        n = root
+        for i in range(1, len(st)):
+            n.left = None
+            n.right = st[i]
+            n = st[i]
+        return None
+
+    def iterative_flatten(self, root):
+        while root is not None:
+            if root.left is not None:
+                left_node = root.left
+                while left_node.right is not None:
+                    left_node = left_node.right
+                left_node.right = root.right
+                root.right = root.left
+                root.left = None
+            root = root.right
+
 
 if __name__ == '__main__':
     import tree_utilities
 
-    root = tree_utilities.deserialize('[1,2,3,4,5]')
+    root = tree_utilities.deserialize('[1,2]')
     solution = BinaryTree()
-    print solution.pathSum(root, 7)
+    print solution.iterative_flatten(root)
