@@ -1,11 +1,11 @@
 class BinaryTree(object):
     def traverse(self, p, results, depth):
         if p is not None:
-            self.traverse(p.left, results, depth+1)
+            self.traverse(p.left, results, depth + 1)
             while len(results) <= depth:
                 results.append([])
             results[depth].append(p.val)
-            self.traverse(p.right, results, depth+1)
+            self.traverse(p.right, results, depth + 1)
 
     def levelOrder(self, root):
         """
@@ -62,21 +62,35 @@ class BinaryTree(object):
         if root is None:
             return 0
         else:
-            return 1+max(self.__get_height(root.left), self.__get_height(root.right))
+            return 1 + max(self.__get_height(root.left), self.__get_height(root.right))
+
+    def __get_dfs_height(self, root):
+        if root is None:
+            return 0
+        left_height = self.__get_dfs_height(root.left)
+        if left_height == -1:
+            return -1
+        right_height = self.__get_dfs_height(root.right)
+        if right_height == -1:
+            return -1
+        if abs(left_height - right_height) > 1:
+            return -1
+        return 1 + max(left_height, right_height)
 
     def isBalanced(self, root):
         """
         :type root: TreeNode
         :rtype: bool
         """
-        if root is None:
-            return True
-        return abs(self.__get_height(root.left)-self.__get_height(root.right)) <= 1 and self.isBalanced(root.left) and self.isBalanced(root.right)
-
+        # if root is None:
+        #     return True
+        # return abs(self.__get_height(root.left)-self.__get_height(root.right)) <= 1 and self.isBalanced(root.left) and self.isBalanced(root.right)
+        return self.__get_dfs_height(root) != -1
 
 
 if __name__ == '__main__':
     import tree_utilities
+
     root = tree_utilities.deserialize('[3,9,20,null,null,15,7]')
     solution = BinaryTree()
     print solution.bottomUPTraversal(root)
